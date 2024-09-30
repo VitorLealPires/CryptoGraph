@@ -1,0 +1,31 @@
+body {
+    background-color: #27271b; /* Fundo escuro */
+    color: #ffffff; /* Texto branco para contraste */
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.cabecalho{
+    padding: 2% 0% 0% 15%;
+}
+
+.cabecalho__menu{
+    display: flex;
+    gap: 80px;
+
+}
+
+
+        
+h1 {
+    margin-top: 20px;
+    
+}
+        
+
+
+canvas {
+    margin: 20px auto;
+            display: block;
+}
+    
