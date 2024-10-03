@@ -1,3 +1,9 @@
+const  buyButton = document.getElementById('buyButton');    // Botão de compra
+buyButton.addEventListener('click', () => handleTransaction('bought')); // Adiciona um evento de clique ao botão de compra
+const sellButton = document.getElementById('sellButton');  // Botão de venda
+sellButton.addEventListener('click', () => handleTransaction('sold')); // Adiciona um evento de clique ao botão de venda
+
+
 async function getCryptoData() {
     try {
         const response = await fetch('/crypto-data');
@@ -52,13 +58,22 @@ async function updatePrices() {
     }
 }
 
+// Inicializa a carteira
+let wallet = {
+    cash: 10000000,  // Começando com $10.000.000
+    bitcoin: 0,
+    ethereum: 0,
+    uniswap: 0,
+};
+
 function handleTransaction(action) {
     const cryptoSelect = document.getElementById('cryptoSelect').value;
     const amount = parseFloat(document.getElementById('amountInput').value);
     let price;
-
-    // Get the current price based on the selected cryptocurrency
     const currentHour = new Date().getHours();
+    console.log('Ação:', action, 'Criptomoeda:', cryptoSelect, 'Quantidade:', amount, 'currentHour:', currentHour);
+
+    // Obtém o preço atual baseado na criptomoeda selecionada
     switch (cryptoSelect) {
         case 'bitcoin':
             price = bitcoinPrices[currentHour];
@@ -75,15 +90,39 @@ function handleTransaction(action) {
 
     if (price !== null && amount > 0) {
         const totalCost = price * amount;
-        const message = `You ${action} ${amount} ${cryptoSelect} for a total of $${totalCost.toFixed(2)}.`;
-        document.getElementById('transactionMessage').innerText = message;
+        if (action === 'bought') {
+            if (wallet.cash >= totalCost) {
+                wallet.cash -= totalCost; // Deduz o custo do caixa
+                wallet[cryptoSelect] += amount; // Adiciona à criptomoeda
+                const message = `Você comprou ${amount} ${cryptoSelect} por um total de $ ${totalCost.toFixed(2)}.`;
+                document.getElementById('transactionMessage').innerText = message;
+            } else {
+                document.getElementById('transactionMessage').innerText = 'Fundos insuficientes para comprar.';
+            }
+        } else if (action === 'sold') {
+            if (wallet[cryptoSelect] >= amount) {
+                wallet[cryptoSelect] -= amount; // Deduz a quantidade da carteira
+                wallet.cash += totalCost; // Adiciona ao caixa
+                const message = `Você vendeu ${amount} ${cryptoSelect} por um total de $ ${totalCost.toFixed(2)}.`;
+                document.getElementById('transactionMessage').innerText = message;
+            } else {
+                document.getElementById('transactionMessage').innerText = 'Quantidade de criptomoeda insuficiente para vender.';
+            }
+        }
+        updateWalletDisplay(); // Chama uma função para atualizar a exibição da carteira
     } else {
-        document.getElementById('transactionMessage').innerText = 'Invalid transaction.';
+        document.getElementById('transactionMessage').innerText = 'Transação inválida.';
     }
 }
 
-document.getElementById('buyButton').addEventListener('click', () => handleTransaction('bought'));
-document.getElementById('sellButton').addEventListener('click', () => handleTransaction('sold'));
+// Função para exibir o estado atual da carteira
+function updateWalletDisplay() {
+    document.getElementById('walletDisplay').innerText =
+        `Dinheiro: $${wallet.cash.toFixed(2)} | Bitcoin: ${wallet.bitcoin} BTC | Ethereum: ${wallet.ethereum} ETH | Uniswap: ${wallet.uniswap} UNI`;
+}
+
+// Chame esta função uma vez para exibir o estado inicial da carteira
+updateWalletDisplay();
 
 
 
@@ -121,7 +160,7 @@ function createChart() {
                     tension: 0.1 // Suaviza a linha de conexão entre os pontos
                 },
                 {
-                    label: 'Preço do Ethereum (USD)',
+                    label: 'Preço do Uniswap (USD)',
                     data: uniswapPrices,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)', // Preenche a área sob a linha
                     borderColor: 'rgba(75, 192, 192, 1)', // Cor da linha de Ethereum
