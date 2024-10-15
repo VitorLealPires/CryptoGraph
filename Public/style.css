@@ -5,16 +5,6 @@ body {
     text-align: center;
 }
 
-.cabecalho{
-    padding: 2% 0% 0% 15%;
-}
-
-.cabecalho__menu{
-    display: flex;
-    gap: 80px;
-
-}
-
 
         
 h1 {
