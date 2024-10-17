@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="./style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="Public/script.js"></script>
-
 </head>
 <body>
     <main>
@@ -21,20 +20,17 @@
                 <option value="ethereum">Ethereum</option>
                 <option value="uniswap">Uniswap</option>
             </select>
-            <label for="amountInput">quantidade:</label>
+            <label for="amountInput">Quantidade:</label>
             <input type="number" id="amountInput" placeholder="Quantidade" min="0">
             <button id="buyButton">Comprar</button>
             <button id="sellButton">Vender</button>
             <div id="transactionMessage"></div>
             <div id="walletDisplay"></div>
 
+            <!-- Novo botão para mostrar/ocultar histórico de transações -->
+            <button id="toggleTransactionHistory">Histórico de Transações</button>
+            <ul id="transactionHistory" style="display: none;"></ul> <!-- Inicialmente oculto -->
         </div>
-
-        
-
-
-
-
     </main>
     <h1>Preços das Criptomoedas</h1>
     <canvas id="cryptoChart" width="600" height="400"></canvas>
@@ -42,4 +38,5 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 

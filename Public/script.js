@@ -1,8 +1,14 @@
-const  buyButton = document.getElementById('buyButton');    // Botão de compra
+let transactionHistory = [];  // Array para armazenar o histórico de transações
+
+const buyButton = document.getElementById('buyButton'); // Botão de compra
 buyButton.addEventListener('click', () => handleTransaction('bought')); // Adiciona um evento de clique ao botão de compra
-const sellButton = document.getElementById('sellButton');  // Botão de venda
+
+const sellButton = document.getElementById('sellButton'); // Botão de venda
 sellButton.addEventListener('click', () => handleTransaction('sold')); // Adiciona um evento de clique ao botão de venda
 
+// Novo botão para mostrar/ocultar histórico de transações
+const toggleTransactionHistoryButton = document.getElementById('toggleTransactionHistory'); 
+toggleTransactionHistoryButton.addEventListener('click', toggleTransactionHistory); // Adiciona evento ao botão de histórico
 
 async function getCryptoData() {
     try {
@@ -16,12 +22,10 @@ async function getCryptoData() {
     }
 }
 
-
-
 const hours = Array.from({ length: 24 }, (_, i) => `${i}:00`); // Rótulos para as horas
 
 // Inicializando arrays para armazenar preços com null para horas futuras
-let bitcoinPrices = Array(24).fill(null);
+let bitcoinPrices = Array(24).fill(null); 
 let ethereumPrices = Array(24).fill(null);
 let uniswapPrices = Array(24).fill(null);
 
@@ -90,42 +94,69 @@ function handleTransaction(action) {
 
     if (price !== null && amount > 0) {
         const totalCost = price * amount;
+        let transactionMessage = '';
+
         if (action === 'bought') {
             if (wallet.cash >= totalCost) {
                 wallet.cash -= totalCost; // Deduz o custo do caixa
                 wallet[cryptoSelect] += amount; // Adiciona à criptomoeda
-                const message = `Você comprou ${amount} ${cryptoSelect} por um total de $ ${totalCost.toFixed(2)}.`;
-                document.getElementById('transactionMessage').innerText = message;
+                transactionMessage = `Você comprou ${amount} ${cryptoSelect} por um total de $ ${totalCost.toFixed(2)}.`;
+                
+                // Adiciona ao histórico de transações
+                transactionHistory.push({ action, cryptoSelect, amount, totalCost, date: new Date().toLocaleString() });
             } else {
-                document.getElementById('transactionMessage').innerText = 'Fundos insuficientes para comprar.';
+                transactionMessage = 'Fundos insuficientes para comprar.';
             }
         } else if (action === 'sold') {
             if (wallet[cryptoSelect] >= amount) {
                 wallet[cryptoSelect] -= amount; // Deduz a quantidade da carteira
                 wallet.cash += totalCost; // Adiciona ao caixa
-                const message = `Você vendeu ${amount} ${cryptoSelect} por um total de $ ${totalCost.toFixed(2)}.`;
-                document.getElementById('transactionMessage').innerText = message;
+                transactionMessage = `Você vendeu ${amount} ${cryptoSelect} por um total de $ ${totalCost.toFixed(2)}.`;
+                
+                // Adiciona ao histórico de transações
+                transactionHistory.push({ action, cryptoSelect, amount, totalCost, date: new Date().toLocaleString() });
             } else {
-                document.getElementById('transactionMessage').innerText = 'Quantidade de criptomoeda insuficiente para vender.';
+                transactionMessage = 'Quantidade de criptomoeda insuficiente para vender.';
             }
         }
+        document.getElementById('transactionMessage').innerText = transactionMessage;
         updateWalletDisplay(); // Chama uma função para atualizar a exibição da carteira
+        updateTransactionDisplay(); // Atualiza a exibição do histórico de transações
     } else {
         document.getElementById('transactionMessage').innerText = 'Transação inválida.';
     }
 }
 
+// Função para alternar a exibição do histórico de transações
+function toggleTransactionHistory() {
+    const transactionList = document.getElementById('transactionHistory');
+    // Alterna a exibição da lista de transações
+    if (transactionList.style.display === 'none') {
+        transactionList.style.display = 'block'; // Mostra a lista
+    } else {
+        transactionList.style.display = 'none'; // Oculta a lista
+    }
+}
+
+function updateTransactionDisplay() {
+    const transactionList = document.getElementById('transactionHistory');
+    transactionList.innerHTML = ''; // Limpa a lista atual
+
+    transactionHistory.forEach(transaction => {
+        const transactionItem = document.createElement('li');
+        transactionItem.innerText = `${transaction.date}: ${transaction.amount} ${transaction.cryptoSelect} ${transaction.action === 'bought' ? 'comprados' : 'vendidos'} por $${transaction.totalCost.toFixed(2)}`;
+        transactionList.appendChild(transactionItem);
+    });
+}
+
 // Função para exibir o estado atual da carteira
 function updateWalletDisplay() {
     document.getElementById('walletDisplay').innerText =
-        `Dinheiro: $${wallet.cash.toFixed(2)} | Bitcoin: ${wallet.bitcoin} BTC | Ethereum: ${wallet.ethereum} ETH | Uniswap: ${wallet.uniswap} UNI`;
+        `Dinheiro: ${wallet.cash.toFixed(2)} | Bitcoin: ${wallet.bitcoin} BTC | Ethereum: ${wallet.ethereum} ETH | Uniswap: ${wallet.uniswap} UNI`;
 }
 
 // Chame esta função uma vez para exibir o estado inicial da carteira
 updateWalletDisplay();
-
-
-
 
 function createChart() {
     const ctx = document.getElementById('cryptoChart').getContext('2d');
@@ -163,7 +194,7 @@ function createChart() {
                     label: 'Preço do Uniswap (USD)',
                     data: uniswapPrices,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)', // Preenche a área sob a linha
-                    borderColor: 'rgba(75, 192, 192, 1)', // Cor da linha de Ethereum
+                    borderColor: 'rgba(75, 192, 192, 1)', // Cor da linha de Uniswap
                     borderWidth: 2,
                     fill: false, // Remove preenchimento da área sob a linha
                     spanGaps: true, // Conecta os pontos com null ao longo do tempo
@@ -183,7 +214,7 @@ function createChart() {
                         color: '#ffffff'
                     },
                     ticks: {
-                        color: '#ffffff'
+                        color: '#ffffff' // Cor das marcações do eixo X
                     }
                 },
                 y: {
@@ -191,17 +222,17 @@ function createChart() {
                     title: {
                         display: true,
                         text: 'Preço em USD',
-                        color: '#ffffff'
+                        color: '#ffffff' // Cor do título do eixo Y
                     },
                     ticks: {
-                        color: '#ffffff'
+                        color: '#ffffff' // Cor das marcações do eixo Y
                     }
                 }
             },
             plugins: {
                 legend: {
                     labels: {
-                        color: '#ffffff'
+                        color: '#ffffff' // Cor das labels da legenda
                     }
                 },
                 tooltip: {
@@ -210,13 +241,13 @@ function createChart() {
                     intersect: false, // Permite que o tooltip apareça mesmo entre pontos
                     callbacks: {
                         label: function(tooltipItem) {
-                            return `${tooltipItem.dataset.label}: $${tooltipItem.raw ? tooltipItem.raw.toFixed(2) : 'N/A'}`;
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw ? tooltipItem.raw.toFixed(2) : 'N/A'}`; // Formatação do tooltip
                         }
                     }
                 }
             },
             interaction: {
-                mode: 'nearest',
+                mode: 'nearest', // Estilo de interação
                 axis: 'x',
                 intersect: false
             }
@@ -226,7 +257,7 @@ function createChart() {
 
 async function updateChart(chart) {
     await updatePrices();
-    chart.update();
+    chart.update(); // Atualiza o gráfico após os preços serem atualizados
 }
 
 window.onload = async () => {
@@ -236,8 +267,8 @@ window.onload = async () => {
     await updatePrices();
     chart.update();
 
-    // Atualiza os preços e o gráfico a cada 3 minutos
+    // Atualiza os preços e o gráfico a cada 30 segundos
     setInterval(() => {
         updateChart(chart);
-    }, 30000); // 3 minutos em milissegundos
+    }, 30000); // 30 segundos em milissegundos
 };
