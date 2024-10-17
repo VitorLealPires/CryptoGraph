@@ -15,6 +15,10 @@ Prints do site em funcionamento
 
 ![Venda de cripto](./assets/venda.jpg)
 
+4. histórico de transações
+
+![histórico de transações](./assets/historico.jpg)
+
 
 Descrição
 
