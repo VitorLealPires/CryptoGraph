@@ -17,7 +17,19 @@ Prints do site em funcionamento
 
 4. histórico de transações
 
-![histórico de transações](./assets/historico.jpg)
+![histórico de transações](./assets/historico.png)
+
+5. diagrama de classe
+
+![diagrama de classe](./assets/diaClasse.png)
+
+6. diagrama de objetos
+
+![diagrama de objetos](./assets/diaObj.png)
+
+7. diagrama de caso de uso
+
+![diagrama de caso de uso](./assets/diaCasoUso.png)
 
 
 Descrição
