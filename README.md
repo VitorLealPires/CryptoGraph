@@ -1,5 +1,21 @@
 Crypto Dashboard
 
+
+Prints do site em funcionamento
+
+1. Gráfico de Preços
+
+![Gráfico de Preços](./assets/grafico.jpg)
+
+2. Compra de cripto
+
+![Compra de cripto](./assets/Compra.jpg)
+
+3. Venda de cripto
+
+![Venda de cripto](./assets/venda.jpg)
+
+
 Descrição
 
 Este projeto é um dashboard de criptomoedas desenvolvido em Node.js, Express, HTML, CSS e JavaScript. Ele exibe gráficos atualizados com os preços de criptomoedas como Bitcoin, Ethereum e Uniswap, permitindo que os usuários vejam a variação dos preços ao longo do dia.
@@ -51,18 +67,5 @@ CoinGecko API: API externa utilizada para buscar as cotações das criptomoedas 
 #######################################################################################
 
 
-Prints do site em funcionamento
-
-1. Gráfico de Preços
-
-![Gráfico de Preços](./assets/grafico.jpg)
-
-2. Compra de cripto
-
-![Compra de cripto](./assets/Compra.jpg)
-
-3. Venda de cripto
-
-![Venda de cripto](./assets/venda.jpg)
 
 
