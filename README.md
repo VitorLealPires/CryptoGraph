@@ -31,6 +31,10 @@ Prints do site em funcionamento
 
 ![diagrama de caso de uso](./assets/diaCasoUso.png)
 
+8. diagrama de arquitetura
+
+![diagrama de arquitetura](./assets/diaArquitetura.png)
+
 
 Descrição
 
